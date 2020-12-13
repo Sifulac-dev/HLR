@@ -23,6 +23,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class Listener implements org.bukkit.event.Listener {
 
+	boolean state = true;
+	
 	@EventHandler
 	public void onPlaceHopper(BlockPlaceEvent event) {
 
@@ -33,7 +35,7 @@ public class Listener implements org.bukkit.event.Listener {
 			return;
 
 		for (String s : item.getItemMeta().getLore()) {
-			if (s.contains("§eHopperMod")) {
+			if (s.contains("Â§eHopperMod")) {
 
 				HopperObject hopperObject = new HopperObject();
 
@@ -52,11 +54,12 @@ public class Listener implements org.bukkit.event.Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBreakHopper(BlockBreakEvent event) {
 
 		Block b = event.getBlock();
 		String world = b.getWorld().getName();
+		state = false;
 		if (b.getType().equals(Material.HOPPER)) {
 
 			Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), new Runnable() {
@@ -70,6 +73,7 @@ public class Listener implements org.bukkit.event.Listener {
 					if (containHopper(hopper, Reflections.ActiveHopper)) {
 						removeHopper(hopper, Reflections.ActiveHopper);
 						Bukkit.broadcastMessage("HOPPER REMOVED");
+						state = true;
 						return;
 					}
 				}
@@ -135,7 +139,7 @@ public class Listener implements org.bukkit.event.Listener {
 
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onItemDrop(ItemSpawnEvent event) {
 
 		ItemStack item = event.getEntity().getItemStack();
@@ -149,17 +153,23 @@ public class Listener implements org.bukkit.event.Listener {
 				@Override
 				public void run() {
 
+					if(state == false) return;
+					
 					for (HopperObject hopper : hopperPresence(location)) {
 
 						Block b = world.getBlockAt(hopper.getLocationX(), hopper.getLocationY(), hopper.getLocationZ());
-						Hopper hopperObj = (Hopper) b.getState();
-						Inventory hopperInv = hopperObj.getInventory();
+						
+						if(!b.getState().getType().equals(Material.AIR)) {
+							
+							Hopper hopperObj = (Hopper) b.getState();
+							Inventory hopperInv = hopperObj.getInventory();
 
-						if (canReceiveItem(hopperInv)) {
-							hopperInv.addItem(item);
-							event.getEntity().remove();
-							break;
-						}
+							if (canReceiveItem(hopperInv)) {
+								hopperInv.addItem(item);
+								event.getEntity().remove();
+								break;
+							}
+						}						
 					}
 				}
 			});
@@ -199,6 +209,7 @@ public class Listener implements org.bukkit.event.Listener {
 	private List<HopperObject> hopperPresence(Location location) {
 
 		List<HopperObject> hopperPresence = new ArrayList<HopperObject>();
+		
 		for (HopperObject activeHopper : Reflections.ActiveHopper) {
 
 			if (activeHopper.getWorld().equals(location.getWorld().getName())) {
