@@ -2,6 +2,8 @@ package fr.sifulac.plugin;
 
 public class HopperObject {
 
+	private String id;
+	
 	private int locationX;
 	private int locationY;
 	private int locationZ;
@@ -11,7 +13,14 @@ public class HopperObject {
 	
 	private String world;
 	
-	public HopperObject() {		
+	public HopperObject(String id, int locX, int locY, int locZ, int chunkX, int chunkZ, String world) {		
+		this.setId(id);
+		this.locationX = locX;
+		this.locationY = locY;
+		this.locationZ = locZ;
+		this.chunkX = chunkX;
+		this.chunkZ = chunkZ;
+		this.world = world;
 	}
 	
 	//SETTER
@@ -62,6 +71,14 @@ public class HopperObject {
 	
 	public String getWorld() {
 		return world;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 		
 }

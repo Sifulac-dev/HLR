@@ -33,7 +33,7 @@ public class HopperCommand implements CommandExecutor {
 		
 		ItemStack item = new ItemStack(Material.HOPPER, 1);
 		ItemMeta infos = item.getItemMeta();
-		infos.setLore(Arrays.asList("§eHopperMod"));
+		infos.setLore(Arrays.asList("Â§eHopperMod"));
 		item.setItemMeta(infos);
 		
 		player.getInventory().addItem(item);

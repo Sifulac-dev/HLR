@@ -1,11 +1,7 @@
 package fr.sifulac.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -23,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Listener implements org.bukkit.event.Listener {
 
-	boolean state = true;
+	boolean STATE = true;
 	
 	@EventHandler
 	public void onPlaceHopper(BlockPlaceEvent event) {
@@ -37,18 +33,8 @@ public class Listener implements org.bukkit.event.Listener {
 		for (String s : item.getItemMeta().getLore()) {
 			if (s.contains("§eHopperMod")) {
 
-				HopperObject hopperObject = new HopperObject();
-
-				hopperObject.setChunkX(block.getChunk().getX());
-				hopperObject.setChunkZ(block.getChunk().getZ());
-
-				hopperObject.setLocationX(block.getX());
-				hopperObject.setLocationY(block.getY());
-				hopperObject.setLocationZ(block.getZ());
-
-				hopperObject.setWorld(block.getWorld().getName());
-
-				Reflections.ActiveHopper.add(hopperObject);
+				HopperObject hopper = new HopperObject(String.valueOf(block.getX() + block.getY() + block.getZ()), block.getX(), block.getY(), block.getZ(), block.getChunk().getX(), block.getChunk().getZ(), block.getWorld().getName());
+				Reflections.ActiveHopper.add(hopper);
 				break;
 			}
 		}
@@ -58,24 +44,24 @@ public class Listener implements org.bukkit.event.Listener {
 	public void onBreakHopper(BlockBreakEvent event) {
 
 		Block b = event.getBlock();
-		String world = b.getWorld().getName();
-		state = false;
+		STATE = false;
 		if (b.getType().equals(Material.HOPPER)) {
 
 			Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), new Runnable() {
 
 				@Override
 				public void run() {
+					String id = String.valueOf(b.getX() + b.getY() + b.getZ());
+					
+					Reflections.ActiveHopper.remove(Reflections.ActiveHopper.stream()
+							.filter(hp -> id.equals(hp.getId())).findFirst().orElse(null));
+					
+					Bukkit.broadcastMessage("HOPPER REMOVED");
+					
+					STATE = true;
+					
+					return;
 
-					HopperObject hopper = getHopper(b.getChunk().getX(), b.getChunk().getZ(), b.getX(), b.getY(),
-							b.getZ(), world);
-
-					if (containHopper(hopper, Reflections.ActiveHopper)) {
-						removeHopper(hopper, Reflections.ActiveHopper);
-						Bukkit.broadcastMessage("HOPPER REMOVED");
-						state = true;
-						return;
-					}
 				}
 			});
 		}
@@ -95,11 +81,10 @@ public class Listener implements org.bukkit.event.Listener {
 				for (BlockState b : blocks) {
 					if (b.getType().equals(Material.HOPPER)) {
 
-						HopperObject hopper = getHopper(b.getChunk().getX(), b.getChunk().getZ(), b.getX(), b.getY(),
-								b.getZ(), b.getWorld().getName());
-
-						if (containHopper(hopper, Reflections.InactiveHopper)) {
-							removeHopper(hopper, Reflections.InactiveHopper);
+						String id = String.valueOf(b.getX() + b.getY() + b.getZ());
+						
+						if (Reflections.InactiveHopper.remove(Reflections.InactiveHopper.stream().filter(hp -> id.equals(hp.getId())).findFirst().orElse(null))) {
+							HopperObject hopper = new HopperObject(id, b.getX(), b.getY(), b.getZ(), b.getChunk().getX(), b.getChunk().getZ(), b.getWorld().getName());							
 							Reflections.ActiveHopper.add(hopper);
 							Bukkit.broadcastMessage("LOAD HOPPER");
 						}
@@ -124,12 +109,14 @@ public class Listener implements org.bukkit.event.Listener {
 
 					if (b.getType().equals(Material.HOPPER)) {
 
-						HopperObject hopper = getHopper(b.getChunk().getX(), b.getChunk().getZ(), b.getX(), b.getY(),
-								b.getZ(), b.getWorld().getName());
+						String id = b.getX() + b.getY() + b.getZ() + "";
 
-						if (containHopper(hopper, Reflections.ActiveHopper)) {
-							removeHopper(hopper, Reflections.ActiveHopper);
+						if (Reflections.ActiveHopper.remove(Reflections.ActiveHopper.stream()
+								.filter(hp -> id.equals(hp.getId())).findFirst().orElse(null))) {
+							
+							HopperObject hopper = new HopperObject(id, b.getX(), b.getY(), b.getZ(), b.getChunk().getX(), b.getChunk().getZ(), b.getWorld().getName());
 							Reflections.InactiveHopper.add(hopper);
+
 							Bukkit.broadcastMessage("UNLOAD HOPPER");
 						}
 					}
@@ -143,8 +130,9 @@ public class Listener implements org.bukkit.event.Listener {
 	public void onItemDrop(ItemSpawnEvent event) {
 
 		ItemStack item = event.getEntity().getItemStack();
-		Location location = event.getLocation();
-		World world = location.getWorld();
+		int cX = event.getLocation().getChunk().getX();
+		int cZ = event.getLocation().getChunk().getZ();
+		World world = event.getLocation().getWorld();
 
 		if (item.getType().equals(Material.CACTUS)) {
 
@@ -153,95 +141,27 @@ public class Listener implements org.bukkit.event.Listener {
 				@Override
 				public void run() {
 
-					if(state == false) return;
-					
-					for (HopperObject hopper : hopperPresence(location)) {
+					if (STATE == false)
+						return;
+
+					for (HopperObject hopper : Manager.hopperPresence(cX, cZ)) {
 
 						Block b = world.getBlockAt(hopper.getLocationX(), hopper.getLocationY(), hopper.getLocationZ());
-						
-						if(!b.getState().getType().equals(Material.AIR)) {
-							
+
+						if (!b.getState().getType().equals(Material.AIR)) {
+
 							Hopper hopperObj = (Hopper) b.getState();
 							Inventory hopperInv = hopperObj.getInventory();
 
-							if (canReceiveItem(hopperInv)) {
+							if (Manager.canReceiveItem(hopperInv)) {
 								hopperInv.addItem(item);
 								event.getEntity().remove();
 								break;
 							}
-						}						
+						}
 					}
 				}
 			});
 		}
-	}
-
-	private HopperObject getHopper(int chunkX, int chunkZ, int x, int y, int z, String world) {
-
-		HopperObject hopper = new HopperObject();
-
-		hopper.setChunkX(chunkX);
-		hopper.setChunkZ(chunkZ);
-		hopper.setLocationX(x);
-		hopper.setLocationY(y);
-		hopper.setLocationZ(z);
-		hopper.setWorld(world);
-
-		return hopper;
-	}
-
-	private boolean canReceiveItem(Inventory inventory) {
-
-		if (inventory.getSize() == 0)
-			return true;
-
-		for (ItemStack item : inventory.getContents()) {
-			if (item == null)
-				return true;
-			if (item.getType().equals(Material.CACTUS)) {
-				if (item.getAmount() < 64)
-					return true;
-			}
-		}
-		return false;
-	}
-
-	private List<HopperObject> hopperPresence(Location location) {
-
-		List<HopperObject> hopperPresence = new ArrayList<HopperObject>();
-		
-		for (HopperObject activeHopper : Reflections.ActiveHopper) {
-
-			if (activeHopper.getWorld().equals(location.getWorld().getName())) {
-
-				if (activeHopper.getChunkX() == location.getChunk().getX()
-						&& activeHopper.getChunkZ() == location.getChunk().getZ()) {
-					hopperPresence.add(activeHopper);
-				}
-			}
-		}
-		return hopperPresence;
-	}
-
-	private void removeHopper(HopperObject hopperTarget, List<HopperObject> listHopper) {
-		for (HopperObject obj : listHopper) {
-			if (obj.getLocationX() == hopperTarget.getLocationX() && obj.getLocationY() == hopperTarget.getLocationY()
-					&& obj.getLocationZ() == hopperTarget.getLocationZ()
-					&& obj.getWorld().equals(hopperTarget.getWorld())) {
-				listHopper.remove(obj);
-				break;
-			}
-		}
-	}
-
-	private boolean containHopper(HopperObject hopperTarget, List<HopperObject> listHopper) {
-		for (HopperObject obj : listHopper) {
-			if (obj.getLocationX() == hopperTarget.getLocationX() && obj.getLocationY() == hopperTarget.getLocationY()
-					&& obj.getLocationZ() == hopperTarget.getLocationZ()
-					&& obj.getWorld().equals(hopperTarget.getWorld())) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
