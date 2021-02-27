@@ -1,0 +1,9 @@
+main: fr.sifulac.plugin.Main
+version: 1.0
+author: Sifulac
+name: HLR
+commands:
+  hopper:
+    description: Hopper command
+    usage: /<command>
+    aliases: ho
