@@ -9,6 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import fr.sifulac.plugin.Object.HopperObject;
+import fr.sifulac.plugin.Object.Maps;
+import fr.sifulac.plugin.Object.Region;
+
 public class HopperCommand implements CommandExecutor {
 
 	@Override
@@ -19,13 +23,17 @@ public class HopperCommand implements CommandExecutor {
 
 		if (args.length > 0) {
 			if (args[0].equalsIgnoreCase("list")) {
-				int i = 0;
-				Reflections.getRegions()
-						.forEach((reg) -> reg.getHoppersInRegions()
-								.forEach((c) -> Bukkit.broadcastMessage("§7Hopper:§b " + i + " §7Chunk location: X§b "
-										+ c.getChunkX() + " §7Z:§b " + c.getChunkZ() + " §7Coordonnées:§b "
-										+ c.getLocationX() + "," + c.getLocationY() + "," + c.getLocationZ())));
-				return true;
+				
+				for(Maps m : Reflections.getMaps()) {
+					for(Region r : m.getRegions()) {
+						for(HopperObject hp : r.getHoppersInRegions()) {
+							Bukkit.broadcastMessage("§7Chunk location: X§b "
+									+ hp.getChunkX() + " §7Z:§b " + hp.getChunkZ() + " §7Coordonnées:§b "
+									+ hp.getLocationX() + "," + hp.getLocationY() + "," + hp.getLocationZ());
+						}
+					}
+				}				
+				return true;				
 			}
 		}
 

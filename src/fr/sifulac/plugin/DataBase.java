@@ -9,6 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import fr.sifulac.plugin.Object.HopperObject;
+import fr.sifulac.plugin.Object.Maps;
+import fr.sifulac.plugin.Object.Region;
+
 public class DataBase {
 
 	public Connection connection;
@@ -17,7 +21,7 @@ public class DataBase {
 
 	private File _dataFolder;
 
-	private String createTableQueryHoppers = "CREATE TABLE IF NOT EXISTS hoppers ('identifiant' varchar(255), 'chunkX' INTEGER, 'chunkZ' INTEGER, 'locationX' INTEGER, 'locationY' INTEGER, 'locationZ' INTEGER, 'regionX' INTEGER, 'regionZ' INTEGER, 'world' varchar(255));";
+	private String createTableQueryHoppers = "CREATE TABLE IF NOT EXISTS hoppers ('identifiant' varchar(255), 'chunkX' INTEGER, 'chunkZ' INTEGER, 'locationX' INTEGER, 'locationY' INTEGER, 'locationZ' INTEGER, 'regionX' INTEGER, 'regionZ' INTEGER, 'world' varchar(255), 'number' INTEGER);";
 
 	public DataBase(String dbName, File dataFolder) {
 
@@ -80,7 +84,7 @@ public class DataBase {
 	public void addHopper(HopperObject hopper, int regionX, int regionZ, String worldName) {
 		try {
 			PreparedStatement q = connection.prepareStatement(
-					"INSERT INTO hoppers (identifiant, chunkX, chunkZ, locationX, locationY, locationZ, regionX, regionZ, world) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					"INSERT INTO hoppers (identifiant, chunkX, chunkZ, locationX, locationY, locationZ, regionX, regionZ, world, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			String identifiant = String.valueOf(hopper.getLocationX() + hopper.getLocationY() + hopper.getLocationZ());
 			q.setString(1, identifiant);
 			q.setInt(2, hopper.getChunkX());
@@ -91,6 +95,7 @@ public class DataBase {
 			q.setInt(7, regionX);
 			q.setInt(8, regionZ);
 			q.setString(9, worldName);
+			q.setInt(10, 0);
 			q.execute();
 			q.close();
 		} catch (SQLException e) {
@@ -109,11 +114,39 @@ public class DataBase {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void saveHopper(int x, int y, int z, int number) {
+		String identifiant = String.valueOf(x + y + z);
+		try {
+			PreparedStatement q = connection.prepareStatement("UPDATE hoppers SET number = ? WHERE identifiant = ?");
+			q.setInt(1, number);
+			q.setString(2, identifiant);
+			q.execute();
+			q.close();	
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}			
+	}
+	
+	public void resetHopper(HopperObject hp) {
+		String identifiant = String.valueOf(hp.getLocationX() + hp.getLocationY() + hp.getLocationZ());
+		try {
+			PreparedStatement q = connection.prepareStatement("UPDATE hoppers SET number=0 WHERE identifiant = ?");
+			q.setString(1, identifiant);
+			q.execute();
+			q.close();	
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}			
+	}
+	
+	
 	public void loadHoppers() {
 
 		try {
+			
 			PreparedStatement q = connection.prepareStatement("SELECT * FROM hoppers");
+			
 			ResultSet rs = q.executeQuery();
 			while (rs.next()) {
 
@@ -127,23 +160,39 @@ public class DataBase {
 				int regX = rs.getInt("regionX");
 				int regZ = rs.getInt("regionZ");
 
+				int number = rs.getInt("number");
+				
 				String world = rs.getString("world");
+				
+				HopperObject hopper = new HopperObject(locationX, locationY, locationZ, chunkX, chunkZ, world, number);
+				
+				Maps maps = Reflections.getMaps().stream().filter(map -> map.getName().equals(world)).findFirst().orElse(null);
+				
+				if(maps != null) {
+					
+					Region region = maps.getRegions().stream().filter(r -> r.getId().equals(String.valueOf(regX + regZ))).findFirst().orElse(null);
 
-				Region region = Reflections.getRegions().stream()
-						.filter(r -> r.getId().equals(String.valueOf(regX + regZ))).findFirst().orElse(null);
+					if (region != null) {
 
-				if (region != null) {
+						region.addHopper(hopper);
 
-					region.addHopper(new HopperObject(locationX, locationY, locationZ, chunkX, chunkZ, world));
+					} else {
 
-				} else {
-
-					Region r = new Region(String.valueOf(regX + regZ));
-					if (Boolean.TRUE.equals(
-							r.addHopper(new HopperObject(locationX, locationY, locationZ, chunkX, chunkZ, world)))) {
-						Reflections.getRegions().add(r);
+						Region r = new Region(String.valueOf(regX + regZ));
+						r.addHopper(hopper);
+						maps.getRegions().add(r);
+						
 					}
-				}
+				} else {
+					
+					Maps m = new Maps(world);
+					Region r = new Region(String.valueOf(regX + regZ));
+					r.addHopper(hopper);
+					m.getRegions().add(r);
+					Reflections.getMaps().add(m);
+					
+				}		
+				
 			}
 			rs.close();
 			q.close();

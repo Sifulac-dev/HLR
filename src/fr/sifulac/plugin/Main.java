@@ -1,9 +1,13 @@
 package fr.sifulac.plugin;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
+	public String nmsver;
+	public Boolean useOldMethods = false;
+	
 	public DataBase database;
 	
 	public Main() {
@@ -18,7 +22,15 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 	
-		getServer().getPluginManager().registerEvents(new Listener(), this);			
+		
+		nmsver = Bukkit.getServer().getClass().getPackage().getName();
+		nmsver = nmsver.substring(nmsver.lastIndexOf(".") + 1);
+		
+		if (nmsver.equalsIgnoreCase("v1_8_R1") || nmsver.startsWith("v1_7_")) {// Not sure if 1_7 works for the																				// protocol hack?
+			useOldMethods = true;
+		}
+		
+		getServer().getPluginManager().registerEvents(new EventListener(), this);			
 		getCommand("hopper").setExecutor(new HopperCommand());
 		
 		database = new DataBase("DataBase", getDataFolder());
@@ -30,6 +42,8 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		
+		database.disconnect();
 		
 		super.onDisable();
 	}

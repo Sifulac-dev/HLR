@@ -1,4 +1,4 @@
-package fr.sifulac.plugin;
+package fr.sifulac.plugin.Object;
 
 import java.util.ArrayList;
 import java.util.List;
