@@ -8,13 +8,13 @@ Plugins permettant de créer un hoppers pouvant d'aspirer les cactus dans un 1 c
 
 Quelques calculs: 
 
-Si nous prenons une zone de 16 384 par 16 384, ce qui représente une zone de 268 435 456 blocs de superficie cela représente donc 1 048 576 de chunks.
+Si nous prenons une zone de 16 384 par 16 384 dans un seul monde, ce qui représente une zone de 268 435 456 blocs de superficie cela représente donc 1 048 576 de chunks.
 
 Le mauvais système serait que dans le pire des cas ou il y aurait un hopper par chunks. Cela voudrez dire qu'il faudrait 1 048 576 checks dans la liste des hoppers
 pour savoir lequel serait le bon. (dans la pire situation et seulement pour un monde)
 
 Le système mis en place ici coupe les chunks en région de 32x32 chunks.
-Donc le système va d'abords chercher votre région puis le chunks ou vous vous situez. 
+Donc le système va d'abords chercher votre monde puis région et enfin le chunks ou vous vous situez. 
 
 Ce qui donnerait 1 048 576 / (32x32) = 1024. Donc le plugin checkerai 1024 régions au maximun puis comme une région représente 1024 chunks alors dans le pire des cas il y aurait:
 1024 + 1024 = 2048 possiblités dans la pire situation.
