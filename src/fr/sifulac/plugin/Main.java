@@ -2,7 +2,7 @@ package fr.sifulac.plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Main extends JavaPlugin implements org.bukkit.event.Listener{
+public class Main extends JavaPlugin {
 
 	public Main() {
 		instance = this;
@@ -16,8 +16,7 @@ public class Main extends JavaPlugin implements org.bukkit.event.Listener{
 	@Override
 	public void onEnable() {
 	
-		getServer().getPluginManager().registerEvents(new Listener(), this);		
-		
+		getServer().getPluginManager().registerEvents(new Listener(), this);			
 		getCommand("hopper").setExecutor(new HopperCommand());
 		
 		super.onEnable();
