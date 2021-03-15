@@ -13,8 +13,8 @@ public class HopperObject {
 	
 	private String world;
 	
-	public HopperObject(String id, int locX, int locY, int locZ, int chunkX, int chunkZ, String world) {		
-		this.setId(id);
+	public HopperObject(int locX, int locY, int locZ, int chunkX, int chunkZ, String world) {		
+		this.id  = String.valueOf(locX+locY+locZ);
 		this.locationX = locX;
 		this.locationY = locY;
 		this.locationZ = locZ;
@@ -24,6 +24,10 @@ public class HopperObject {
 	}
 	
 	//SETTER
+	public void setId(String id) {
+		this.id = id;
+	}	
+	
 	public void setLocationX(int locationX) {
 		this.locationX = locationX;
 	}
@@ -49,6 +53,10 @@ public class HopperObject {
 	}
 	
 	//GETTER
+	public String getId() {
+		return id;
+	}
+	
 	public int getLocationX() {
 		return locationX;
 	}
@@ -71,14 +79,6 @@ public class HopperObject {
 	
 	public String getWorld() {
 		return world;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 		
 }
