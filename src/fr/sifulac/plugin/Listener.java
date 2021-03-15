@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Listener implements org.bukkit.event.Listener {
 
-	boolean STATE = true;
+	boolean state = true;
 
 	@EventHandler
 	public void onPlaceHopper(BlockPlaceEvent event) {
@@ -40,7 +40,7 @@ public class Listener implements org.bukkit.event.Listener {
 		
 		if (region != null) {
 			
-			HopperObject hopper = region.getHopperInRegion().stream().filter(hp -> hp.getChunkX() == cx && hp.getChunkZ() == cz).findFirst().orElse(null);
+			HopperObject hopper = region.getHoppersInRegions().stream().filter(hp -> hp.getChunkX() == cx && hp.getChunkZ() == cz).findFirst().orElse(null);
 			
 			if(hopper != null) {
 				event.setCancelled(true);
@@ -66,7 +66,7 @@ public class Listener implements org.bukkit.event.Listener {
 	public void onBreakHopper(BlockBreakEvent event) {
 
 		Block b = event.getBlock();
-		STATE = false;
+		state = false;
 		
 		if (b.getType().equals(Material.HOPPER)) {
 
@@ -80,15 +80,15 @@ public class Listener implements org.bukkit.event.Listener {
 
 			if (reg != null) {
 
-				HopperObject h = reg.getHopperInRegion().stream().filter(hp -> hp.getChunkX() == cx && hp.getChunkZ() == cz).findFirst().orElse(null);
+				HopperObject h = reg.getHoppersInRegions().stream().filter(hp -> hp.getChunkX() == cx && hp.getChunkZ() == cz).findFirst().orElse(null);
 				
 				if (h != null && b.getLocation().getBlockX() == h.getLocationX() && b.getLocation().getBlockY() == h.getLocationY() && b.getLocation().getBlockZ() == h.getLocationZ()) {
-					reg.getHopperInRegion().remove(h);
+					reg.getHoppersInRegions().remove(h);
 					event.getPlayer().sendMessage("§eHopper enlevé !");
 				}
 			}
 		}
-		STATE = true;
+		state = true;
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -109,7 +109,7 @@ public class Listener implements org.bukkit.event.Listener {
 			
 			if (reg != null) {
 				
-				HopperObject hopper = reg.getHopperInRegion().stream().filter(hp -> hp.getChunkX() == cx && hp.getChunkZ() == cz).findFirst().orElse(null);
+				HopperObject hopper = reg.getHoppersInRegions().stream().filter(hp -> hp.getChunkX() == cx && hp.getChunkZ() == cz).findFirst().orElse(null);
 
 				if (hopper != null) {
 					

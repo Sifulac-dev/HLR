@@ -5,12 +5,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin implements org.bukkit.event.Listener{
 
 	public Main() {
-		INSTANCE = this;
+		instance = this;
 	}
-	private static Main INSTANCE;
+	private static Main instance;
 	
 	public static Main getInstance() {
-		return INSTANCE;
+		return instance;
 	}
 	
 	@Override

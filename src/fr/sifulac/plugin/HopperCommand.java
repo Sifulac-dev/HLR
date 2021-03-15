@@ -20,7 +20,7 @@ public class HopperCommand implements CommandExecutor {
 			if(args[0].equalsIgnoreCase("list")) {
 				int i = 0;
 				for(Region reg : Reflections.getRegions()) {
-					for(HopperObject c : reg.getHopperInRegion()) {
+					for(HopperObject c : reg.getHoppersInRegions()) {
 						Bukkit.broadcastMessage("§7Hopper:§b " + i + " §7Chunk location: X§b " + c.getChunkX() + " §7Z:§b " + c.getChunkZ() + " §7Coordonnées:§b " + c.getLocationX() + "," + c.getLocationY() + "," + c.getLocationZ());
 						i++;
 					}				
