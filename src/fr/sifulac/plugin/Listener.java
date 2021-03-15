@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Hopper;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
@@ -62,7 +61,7 @@ public class Listener implements org.bukkit.event.Listener {
 
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onBreakHopper(BlockBreakEvent event) {
 
 		Block b = event.getBlock();
@@ -91,7 +90,7 @@ public class Listener implements org.bukkit.event.Listener {
 		state = true;
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler
 	public void onItemDrop(ItemSpawnEvent event) {
 
 		ItemStack item = event.getEntity().getItemStack();
