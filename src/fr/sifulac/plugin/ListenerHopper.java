@@ -26,7 +26,7 @@ public class ListenerHopper implements Listener {
 
 	@EventHandler
 	public void onPlaceHopper(BlockPlaceEvent event) {
-
+		
 		ItemStack item = event.getItemInHand();
 		Block block = event.getBlock();
 
@@ -39,6 +39,9 @@ public class ListenerHopper implements Listener {
 						block.getX(), block.getY(), block.getZ(), block.getChunk().getX(), block.getChunk().getZ(),
 						block.getWorld().getName());
 				main.getVars().getActiveHopper().add(hopper);
+				
+				main.getV
+				
 				break;
 			}
 		}
@@ -120,35 +123,31 @@ public class ListenerHopper implements Listener {
 
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onItemDrop(ItemSpawnEvent event) {
-
+		
 		ItemStack item = event.getEntity().getItemStack();
 		int cX = event.getLocation().getChunk().getX();
 		int cZ = event.getLocation().getChunk().getZ();
 		World world = event.getLocation().getWorld();
-
+		
 		if (item.getType().equals(Material.CACTUS) && state) {
 
-			Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-				
+			Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+
 				for (HopperObject hopper : manager.hopperPresence(cX, cZ)) {
 
 					Block b = world.getBlockAt(hopper.getLocationX(), hopper.getLocationY(), hopper.getLocationZ());
 
-					if (!b.getState().getType().equals(Material.AIR)) {
+					Hopper hopperObj = (Hopper) b.getState();
+					Inventory hopperInv = hopperObj.getInventory();
 
-						Hopper hopperObj = (Hopper) b.getState();
-						Inventory hopperInv = hopperObj.getInventory();
-
-						if (manager.canReceiveItem(hopperInv)) {
-							hopperInv.addItem(item);
-							event.getEntity().remove();
-							break;
-						}
+					if (manager.canReceiveItem(hopperInv)) {
+						hopperInv.addItem(item);
+						event.setCancelled(true);
+						return;
 					}
 				}
-
 			});
 		}
 	}
