@@ -13,33 +13,32 @@ public class HopperCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-		if(!cmd.getName().equalsIgnoreCase("hopper")) return false;
-		if(sender instanceof Player == false) return false;
-		if(args.length > 0) {
-			if(args[0].equalsIgnoreCase("list")) {
+
+		if (!cmd.getName().equalsIgnoreCase("hopper"))
+			return false;
+
+		if (args.length > 0) {
+			if (args[0].equalsIgnoreCase("list")) {
 				int i = 0;
-				for(Region reg : Reflections.getRegions()) {
-					for(HopperObject c : reg.getHoppersInRegions()) {
-						Bukkit.broadcastMessage("§7Hopper:§b " + i + " §7Chunk location: X§b " + c.getChunkX() + " §7Z:§b " + c.getChunkZ() + " §7Coordonnées:§b " + c.getLocationX() + "," + c.getLocationY() + "," + c.getLocationZ());
-						i++;
-					}				
-				}
+				Reflections.getRegions()
+						.forEach((reg) -> reg.getHoppersInRegions()
+								.forEach((c) -> Bukkit.broadcastMessage("§7Hopper:§b " + i + " §7Chunk location: X§b "
+										+ c.getChunkX() + " §7Z:§b " + c.getChunkZ() + " §7Coordonnées:§b "
+										+ c.getLocationX() + "," + c.getLocationY() + "," + c.getLocationZ())));
 				return true;
 			}
 		}
-		
-		Player player = (Player)sender;
-		
+
+		if (Boolean.FALSE.equals(sender instanceof Player))	return false;
+		Player player = (Player) sender;
+
 		ItemStack item = new ItemStack(Material.HOPPER, 1);
 		ItemMeta infos = item.getItemMeta();
 		infos.setDisplayName("§eHopperMod");
 		item.setItemMeta(infos);
-		
+
 		player.getInventory().addItem(item);
-		
-		
-		return false;
+		return true;
 	}
 
 }
