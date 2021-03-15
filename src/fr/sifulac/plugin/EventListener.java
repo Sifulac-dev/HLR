@@ -2,6 +2,7 @@ package fr.sifulac.plugin;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -164,33 +165,15 @@ public class EventListener implements Listener {
 
 				if (b.getX() == ((HopperObject) hp[0]).getLocationX()
 						&& b.getY() == ((HopperObject) hp[0]).getLocationY()
-						&& b.getZ() == ((HopperObject) hp[0]).getLocationZ()) {
-
+						&& b.getZ() == ((HopperObject) hp[0]).getLocationZ()) {				
+					
 					if(e.getPlayer().isSneaking()) {
-						int numberSpaceFree = numberItemCanReceive(e.getPlayer().getInventory())*64;
-						if(numberSpaceFree == 0) {
-							ActionBar.sendActionBar(e.getPlayer(), "§cVous êtes full !");
-							return;
-						}
-						int numberCactus = ((HopperObject) hp[0]).getNumberCactus();
-						int cactusConsume = numberSpaceFree - numberCactus;
-						if(cactusConsume > 0) {
-							
-							((HopperObject) hp[0]).removeCactus(numberCactus);
-							Main.getInstance().database.resetHopper(((HopperObject) hp[0]));
-							e.getPlayer().getInventory().addItem(new ItemStack(Material.CACTUS, numberCactus));
-							
-						} else {
-							
-							((HopperObject) hp[0]).removeCactus(numberSpaceFree);
-							e.getPlayer().getInventory().addItem(new ItemStack(Material.CACTUS, numberSpaceFree));
-							
-						}						
+						deleteCactusInHopper(e.getPlayer(), (HopperObject) hp[0]);
 						return;
 					}
 					
 					ActionBar.sendActionBar(e.getPlayer(),
-							"§bIl y a§c " + ((HopperObject) hp[0]).getNumberCactus() + " §bcactus dans le hopper");
+							"§bIl y a§c " + ((HopperObject) hp[0]).getNumberCactus() + " §bcactus dans le hopper");					
 					return;
 				}
 			}
@@ -198,6 +181,29 @@ public class EventListener implements Listener {
 		}
 	}
 
+	private void deleteCactusInHopper(Player p, HopperObject hopper) {
+			
+			int numberSpaceFree = numberItemCanReceive(p.getInventory())*64;
+			if(numberSpaceFree == 0) {
+				ActionBar.sendActionBar(p, "§cVous êtes full !");
+				return;
+			}
+			int numberCactus = hopper.getNumberCactus();
+			int cactusConsume = numberSpaceFree - numberCactus;
+			if(cactusConsume > 0) {
+				
+				hopper.removeCactus(numberCactus);
+				Main.getInstance().database.resetHopper(hopper);
+				p.getInventory().addItem(new ItemStack(Material.CACTUS, numberCactus));
+				
+			} else {
+				
+				hopper.removeCactus(numberSpaceFree);
+				p.getInventory().addItem(new ItemStack(Material.CACTUS, numberSpaceFree));
+				
+			}						
+	}
+	
 	private Object[] hasHopperInChunk(String worldName, int cx, int cz) {
 
 		int regX = cx / 32;
@@ -223,7 +229,6 @@ public class EventListener implements Listener {
 				}
 			}
 		}
-
 		return null;
 	}
 
