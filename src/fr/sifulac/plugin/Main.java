@@ -4,6 +4,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
+	public DataBase database;
+	
 	public Main() {
 		instance = this;
 	}
@@ -18,6 +20,10 @@ public class Main extends JavaPlugin {
 	
 		getServer().getPluginManager().registerEvents(new Listener(), this);			
 		getCommand("hopper").setExecutor(new HopperCommand());
+		
+		database = new DataBase("DataBase", getDataFolder());
+		database.connect();	
+		database.loadHoppers();
 		
 		super.onEnable();
 	}

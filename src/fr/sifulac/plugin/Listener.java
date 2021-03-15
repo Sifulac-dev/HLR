@@ -13,7 +13,8 @@ import org.bukkit.inventory.ItemStack;
 public class Listener implements org.bukkit.event.Listener {
 
 	boolean state = true;
-
+	private Main main = Main.getInstance();
+	
 	@EventHandler
 	public void onPlaceHopper(BlockPlaceEvent event) {
 
@@ -45,7 +46,9 @@ public class Listener implements org.bukkit.event.Listener {
 				event.setCancelled(true);
 				event.getPlayer().sendMessage("§cUn hopper est déjà dans le chunk !");
 			} else {
-				region.addHopper(new HopperObject(b.getX(), b.getY(), b.getZ(), b.getChunk().getX(), b.getChunk().getZ(), b.getWorld().getName()));
+				HopperObject hp = new HopperObject(b.getX(), b.getY(), b.getZ(), b.getChunk().getX(), b.getChunk().getZ(), b.getWorld().getName());
+				region.addHopper(hp);
+				main.database.addHopper(hp, regX, regZ, b.getWorld().getName());
 				event.getPlayer().sendMessage("§eHopper mis en place !");
 			}			
 
@@ -83,6 +86,7 @@ public class Listener implements org.bukkit.event.Listener {
 				
 				if (h != null && b.getLocation().getBlockX() == h.getLocationX() && b.getLocation().getBlockY() == h.getLocationY() && b.getLocation().getBlockZ() == h.getLocationZ()) {
 					reg.getHoppersInRegions().remove(h);
+					main.database.removeHopper(h);
 					event.getPlayer().sendMessage("§eHopper enlevé !");
 				}
 			}
