@@ -1,6 +1,5 @@
 package fr.sifulac.plugin;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,14 +21,14 @@ public class HopperCommand implements CommandExecutor {
 			for (Maps m : Reflections.getMaps()) {
 				for (Region r : m.getRegions()) {
 					for (HopperObject hp : r.getHoppersInRegions()) {
-						Bukkit.broadcastMessage("§7Hoppper §cn°" + i + " §7Chunk X:§b " + hp.getChunkX() + " §7Z:§b " + hp.getChunkZ()
+						sender.sendMessage("§7Hoppper §cn: " + i + " §7Chunk X:§b " + hp.getChunkX() + " §7Z:§b " + hp.getChunkZ()
 								+ " §7Coordonnées:§b " + hp.getLocationX() + "," + hp.getLocationY() + ","
 								+ hp.getLocationZ());
 						i++;
 					}
 				}
 			}
-			Bukkit.broadcastMessage("§7Nombre d'hopper:§b " + i);
+			sender.sendMessage("§7Nombre d'hopper:§b " + i);
 			return true;		
 		}
 		

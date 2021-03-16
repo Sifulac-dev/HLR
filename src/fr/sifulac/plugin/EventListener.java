@@ -60,8 +60,8 @@ public class EventListener implements Listener {
 						.filter(hp -> hp.getChunkX() == cx && hp.getChunkZ() == cz).findFirst().orElse(null);
 
 				if (hopper != null) { // ALREADY EXIST
-
-					event.getPlayer().sendMessage("§cUn hopper est déjà dans le chunk !");
+					
+					ActionBar.sendActionBar(event.getPlayer(), "§cUn hopper est déjà présent dans le chunk.");
 					return;
 
 				} else { // NO EXIST					
@@ -128,7 +128,7 @@ public class EventListener implements Listener {
 					
 					((Region) hp[1]).getHoppersInRegions().remove((hp[0]));
 					main.database.removeHopper(((HopperObject) hp[0]));
-					ActionBar.sendActionBar(event.getPlayer(), "§eVous avez récupéré le hopper");	
+					ActionBar.sendActionBar(event.getPlayer(), "§eVous avez récupéré le hopper.");	
 					b.setType(Material.AIR);
 					event.getPlayer().getInventory().addItem(Reflections.getHopper());
 					return;
@@ -176,12 +176,13 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public void onClickHopper(PlayerInteractEvent e) {
-
-		int cx = e.getPlayer().getLocation().getChunk().getX();
-		int cz = e.getPlayer().getLocation().getChunk().getZ();
-
+		
 		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock().getType().equals(Material.HOPPER)) {
 
+
+			int cx = e.getClickedBlock().getLocation().getChunk().getX();
+			int cz = e.getClickedBlock().getLocation().getChunk().getZ();
+			
 			e.setCancelled(true);
 			
 			Object[] hp = hasHopperInChunk(e.getPlayer().getLocation().getWorld().getName(), cx, cz);
@@ -199,7 +200,7 @@ public class EventListener implements Listener {
 						return;
 					}
 					
-					ActionBar.sendActionBar(e.getPlayer(), "§bIl y a§c " + ((HopperObject) hp[0]).getNumberCactus() + " §bcactus dans le hopper");					
+					ActionBar.sendActionBar(e.getPlayer(), "§eIl y a§c " + ((HopperObject) hp[0]).getNumberCactus() + " §ecactus dans le hopper.");					
 					return;
 				}
 			}
@@ -230,12 +231,12 @@ public class EventListener implements Listener {
 				
 				hopper.removeCactus(numberCactus);
 				p.getInventory().addItem(new ItemStack(Material.CACTUS, numberCactus));
-				ActionBar.sendActionBar(p, "§eVous avez récupéré§b " + numberCactus + " §ecactus");		
+				ActionBar.sendActionBar(p, "§eVous avez récupéré§c " + numberCactus + " §ecactus.");		
 			} else {
 				
 				hopper.removeCactus(numberSpaceFree);
 				p.getInventory().addItem(new ItemStack(Material.CACTUS, numberSpaceFree));
-				ActionBar.sendActionBar(p, "§eVous avez récupéré§b " + numberSpaceFree + " §ecactus");		
+				ActionBar.sendActionBar(p, "§eVous avez récupéré§c " + numberSpaceFree + " §ecactus.");		
 			}						
 	}
 	
