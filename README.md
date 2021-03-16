@@ -26,6 +26,6 @@ De plus d'après des calculs et des analyses via spark:
 35 hoppers représente 1.59 KB en variables dans la mémoire RAM car 1024x1,59=1628 bytes et donc le nombre de byte que prendrait un hopper en variable dans la ram serait:
 1628/35=46 bytes. Le hopper prendrait alors seulement 46 bytes environ. 
 
-ce test a été réalisé avec 81 hoppers ce qui représente 3.75 KB donc 1024x3.75=3840 bytes et enfin 3840/81=47 bytes environ.
+Ce test a été réalisé avec 81 hoppers ce qui représente 3.75 KB donc 1024x3.75=3840 bytes et enfin 3840/81=47 bytes environ.
 
-Le hopper représente environ 50 bytes.
+Le hopper de farm représente environ 50 bytes pour être large au niveau des valeurs car celle-ci on été arrondi a l'unité supérieur.
