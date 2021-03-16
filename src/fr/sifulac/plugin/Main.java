@@ -28,7 +28,7 @@ public class Main extends JavaPlugin {
 		nmsver = Bukkit.getServer().getClass().getPackage().getName();
 		nmsver = nmsver.substring(nmsver.lastIndexOf(".") + 1);
 		
-		if (nmsver.equalsIgnoreCase("v1_8_R1") || nmsver.startsWith("v1_7_")) {// Not sure if 1_7 works for the																				// protocol hack?
+		if (nmsver.equalsIgnoreCase("v1_8_R1") || nmsver.startsWith("v1_7_")) {
 			useOldMethods = true;
 		}
 		

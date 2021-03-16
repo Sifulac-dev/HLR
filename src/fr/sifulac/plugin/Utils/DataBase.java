@@ -20,14 +20,14 @@ public class DataBase {
 
 	private String _dbName;
 
-	private File _dataFolder;
+	private File dataFolder;
 
 	private String createTableQueryHoppers = "CREATE TABLE IF NOT EXISTS hoppers ('identifiant' varchar(255), 'chunkX' INTEGER, 'chunkZ' INTEGER, 'locationX' INTEGER, 'locationY' INTEGER, 'locationZ' INTEGER, 'regionX' INTEGER, 'regionZ' INTEGER, 'world' varchar(255), 'number' INTEGER);";
 
 	public DataBase(String dbName, File dataFolder) {
 
 		_dbName = dbName;
-		_dataFolder = dataFolder;
+		this.dataFolder = dataFolder;
 
 	}
 
@@ -40,7 +40,7 @@ public class DataBase {
 			Main.getInstance().getDataFolder().mkdir();
 		}
 		
-		File f = new File(_dataFolder, _dbName + ".db");
+		File f = new File(dataFolder, _dbName + ".db");
 		if (!f.exists()) {
 			try {
 				f.createNewFile();

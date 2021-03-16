@@ -108,13 +108,13 @@ public class EventListener implements Listener {
 
 			Object[] hp = hasHopperInChunk(b.getLocation().getWorld().getName(), cx, cz);
 
-			if (hp != null && b.getLocation().getBlockX() == ((HopperObject) hp[0]).getLocationX()
+			if (hp[0] != null && b.getLocation().getBlockX() == ((HopperObject) hp[0]).getLocationX()
 					&& b.getLocation().getBlockY() == ((HopperObject) hp[0]).getLocationY()
 					&& b.getLocation().getBlockZ() == ((HopperObject) hp[0]).getLocationZ()) {
 				
 				if(hasAvaliableSlot(event.getPlayer())) { //RECUP HOPPER
 					
-					((Region) hp[1]).getHoppersInRegions().remove(((HopperObject) hp[0]));
+					((Region) hp[1]).getHoppersInRegions().remove((hp[0]));
 					main.database.removeHopper(((HopperObject) hp[0]));
 					ActionBar.sendActionBar(event.getPlayer(), "§eVous avez récupéré le hopper");	
 					b.setType(Material.AIR);
@@ -145,7 +145,7 @@ public class EventListener implements Listener {
 
 		Object[] hp = hasHopperInChunk(event.getLocation().getWorld().getName(), cx, cz);
 
-		if (hp != null) {
+		if (hp[0] != null) {
 
 			Block b = event.getLocation().getWorld().getBlockAt(((HopperObject) hp[0]).getLocationX(),
 					((HopperObject) hp[0]).getLocationY(), ((HopperObject) hp[0]).getLocationZ());
@@ -172,7 +172,7 @@ public class EventListener implements Listener {
 			
 			Object[] hp = hasHopperInChunk(e.getPlayer().getLocation().getWorld().getName(), cx, cz);
 
-			if (hp != null) {
+			if (hp[0] != null) {
 
 				Block b = e.getClickedBlock();
 
@@ -250,7 +250,7 @@ public class EventListener implements Listener {
 				}
 			}
 		}
-		return null;
+		return new Object[] { null, null, null};
 	}
 
 	private int numberItemCanReceive(PlayerInventory inv) {

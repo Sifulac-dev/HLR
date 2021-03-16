@@ -16,22 +16,22 @@ public class HopperCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-		if (args.length > 0) {
-			
-			if (args[0].equalsIgnoreCase("list")) {
-				
-				for(Maps m : Reflections.getMaps()) {
-					for(Region r : m.getRegions()) {
-						for(HopperObject hp : r.getHoppersInRegions()) {
-							Bukkit.broadcastMessage("§7Chunk location: X§b "+ hp.getChunkX() + " §7Z:§b " + hp.getChunkZ() + " §7Coordonnées:§b " + hp.getLocationX() + "," + hp.getLocationY() + "," + hp.getLocationZ());
-						}
+		if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
+
+			for (Maps m : Reflections.getMaps()) {
+				for (Region r : m.getRegions()) {
+					for (HopperObject hp : r.getHoppersInRegions()) {
+						Bukkit.broadcastMessage("§7Chunk location: X§b " + hp.getChunkX() + " §7Z:§b " + hp.getChunkZ()
+								+ " §7Coordonnées:§b " + hp.getLocationX() + "," + hp.getLocationY() + ","
+								+ hp.getLocationZ());
 					}
-				}				
-				return true;				
+				}
 			}
+			return true;
 		}
 
-		if (Boolean.FALSE.equals(sender instanceof Player))	return false;
+		if (Boolean.FALSE.equals(sender instanceof Player))
+			return false;
 		Player player = (Player) sender;
 		player.getInventory().addItem(Reflections.getHopper());
 		return true;
