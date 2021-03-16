@@ -1,7 +1,5 @@
 package fr.sifulac.plugin.Object;
 
-import org.bukkit.Bukkit;
-
 import fr.sifulac.plugin.Main;
 
 public class HopperObject {
@@ -107,7 +105,7 @@ public class HopperObject {
 	public void removeCactus(int number) {
 		this.numberCactus -= number;
 		Main.getInstance().database.saveHopper(this.locationX, this.locationY, this.locationZ, this.numberCactus);
-		Bukkit.broadcastMessage("Save Cactus in hopper number: " + this.numberCactus);
+		System.out.println("Save number cactus in hopper:§b " + this.locationX + "," +  this.locationY + "," +  this.locationZ + " §rcactus:§b " + this.numberCactus);
 		this.n = this.numberCactus/1000;
 	}	
 	
@@ -118,7 +116,7 @@ public class HopperObject {
 			char c = number.charAt(number.length() - 4);
 			if(Integer.parseInt(String.valueOf(c)) != this.n) {
 				Main.getInstance().database.saveHopper(this.locationX, this.locationY, this.locationZ, this.numberCactus);
-				Bukkit.broadcastMessage("Save Cactus in hopper number: " + this.numberCactus);
+				System.out.println("Save number cactus in hopper:§b " + this.locationX + "," + this.locationY + "," + this.locationZ + " §rcactus:§b " + this.numberCactus);
 				this.n = Integer.parseInt(String.valueOf(c));
 				return true;
 			}
