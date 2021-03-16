@@ -33,7 +33,9 @@ public class EventListener implements Listener {
 
 		if (Boolean.FALSE.equals(isHopperMod(item)))
 			return;
-
+		
+		event.setCancelled(true);
+		
 		int cx = b.getChunk().getX();
 		int cz = b.getChunk().getZ();
 
@@ -43,11 +45,9 @@ public class EventListener implements Listener {
 		regX = b.getChunk().getX() / 32;
 		regZ = b.getChunk().getZ() / 32;
 
-		Maps maps = Reflections.getMaps().stream().filter(map -> map.getName().equals(b.getWorld().getName()))
-				.findFirst().orElse(null);
+		Maps maps = Reflections.getMaps().stream().filter(map -> map.getName().equals(b.getWorld().getName())).findFirst().orElse(null);
 
-		HopperObject hop = new HopperObject(b.getX(), b.getY(), b.getZ(), b.getChunk().getX(), b.getChunk().getZ(),
-				b.getWorld().getName(), 0);
+		HopperObject hop = new HopperObject(b.getX(), b.getY(), b.getZ(), b.getChunk().getX(), b.getChunk().getZ(),	b.getWorld().getName(), 0);
 
 		if (maps != null) { // ALREADY EXIST
 
@@ -61,15 +61,15 @@ public class EventListener implements Listener {
 
 				if (hopper != null) { // ALREADY EXIST
 
-					event.setCancelled(true);
 					event.getPlayer().sendMessage("§cUn hopper est déjà dans le chunk !");
+					return;
 
-				} else { // NO EXIST
-
+				} else { // NO EXIST					
+					
 					region.addHopper(hop);
-					main.database.addHopper(hop, regX, regZ, b.getWorld().getName());
-					ActionBar.sendActionBar(event.getPlayer(), Reflections.msgSetHopper);	
-
+					implementHopper(hop, regX, regZ, b.getWorld().getName(), event.getPlayer());
+					event.setCancelled(false);
+					return;
 				}
 
 			} else { // NO EXIST
@@ -77,7 +77,9 @@ public class EventListener implements Listener {
 				Region r = new Region(String.valueOf(regX + regZ));
 				if (Boolean.TRUE.equals(r.addHopper(hop))) {
 					maps.getRegions().add(r);
-					ActionBar.sendActionBar(event.getPlayer(), Reflections.msgSetHopper);	
+					implementHopper(hop, regX, regZ, b.getWorld().getName(), event.getPlayer());
+					event.setCancelled(false);
+					return;
 				}
 
 			}
@@ -89,10 +91,20 @@ public class EventListener implements Listener {
 			r.addHopper(hop);
 			m.getRegions().add(r);
 			Reflections.getMaps().add(m);
-			ActionBar.sendActionBar(event.getPlayer(), Reflections.msgSetHopper);		
+			implementHopper(hop, regX, regZ, b.getWorld().getName(), event.getPlayer());
+			event.setCancelled(false);
+			return;
 		}
+		
+		event.setCancelled(false);
+		
 	}
-
+	
+	private void implementHopper(HopperObject hopper, int regX, int regZ, String world, Player p) {
+		main.database.addHopper(hopper, regX, regZ, world);
+		ActionBar.sendActionBar(p, Reflections.msgSetHopper);
+	}
+	
 	@EventHandler
 	public void onBreakHopper(BlockBreakEvent event) {
 

@@ -1,9 +1,9 @@
 main: fr.sifulac.plugin.Main
 version: 1.0
 author: Sifulac
-name: HLR
+name: HLR-UP
 commands:
   hopper:
     description: Hopper command
-    usage: /<command>
+    permission: hlr.command.use
     aliases: ho
