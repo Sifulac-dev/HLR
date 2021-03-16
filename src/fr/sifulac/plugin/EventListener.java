@@ -119,13 +119,15 @@ public class EventListener implements Listener {
 					ActionBar.sendActionBar(event.getPlayer(), "§eVous avez récupéré le hopper");	
 					b.setType(Material.AIR);
 					event.getPlayer().getInventory().addItem(Reflections.getHopper());
+					return;
 					
 				} else { //NE RECUP PAS					
 					
 					ActionBar.sendActionBar(event.getPlayer(), "§cVous n'avez pas assez de place dans l'inventaire.");	
-					
+					return;
 				}				
 			}
+			event.setCancelled(false);
 		}
 		state = true;
 	}

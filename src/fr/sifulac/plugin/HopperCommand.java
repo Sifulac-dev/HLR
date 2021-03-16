@@ -17,7 +17,7 @@ public class HopperCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
-			int i = 1;
+			int i = 0;
 			for (Maps m : Reflections.getMaps()) {
 				for (Region r : m.getRegions()) {
 					for (HopperObject hp : r.getHoppersInRegions()) {
@@ -28,7 +28,7 @@ public class HopperCommand implements CommandExecutor {
 					}
 				}
 			}
-			Bukkit.broadcastMessage("Nombre d'hopper: " + i);
+			Bukkit.broadcastMessage("§7Nombre d'hopper:§b " + i);
 			return true;
 		}
 
