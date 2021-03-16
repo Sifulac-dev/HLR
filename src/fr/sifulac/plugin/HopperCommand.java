@@ -17,16 +17,18 @@ public class HopperCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
-
+			int i = 1;
 			for (Maps m : Reflections.getMaps()) {
 				for (Region r : m.getRegions()) {
 					for (HopperObject hp : r.getHoppersInRegions()) {
 						Bukkit.broadcastMessage("§7Chunk location: X§b " + hp.getChunkX() + " §7Z:§b " + hp.getChunkZ()
 								+ " §7Coordonnées:§b " + hp.getLocationX() + "," + hp.getLocationY() + ","
 								+ hp.getLocationZ());
+						i++;
 					}
 				}
 			}
+			Bukkit.broadcastMessage("Nombre d'hopper: " + i);
 			return true;
 		}
 
