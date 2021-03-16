@@ -1,4 +1,4 @@
-# HLR
+# HLR-UP
 Plugins permettant de créer un hoppers pouvant d'aspirer les cactus dans un 1 chunk entier.
  - Celui-ci divise le monde en région de 32x32 chunks. Afin de rechercher une optimisation.
  - Avec un système de sauvegarde dans une base de donnée relationnelle (Sqlite)
@@ -6,7 +6,7 @@ Plugins permettant de créer un hoppers pouvant d'aspirer les cactus dans un 1 c
  - Communication du nombre de cactus à l'intérieur du hopper via l'action bar.
  - Peut supporter le multi-monde. 
 
-Quelques calculs: 
+*Quelques calculs: 
 
 Si nous prenons une zone de 16 384 par 16 384 dans un seul monde, ce qui représente une zone de 268 435 456 blocs de superficie cela représente donc 1 048 576 de chunks.
 
@@ -30,4 +30,14 @@ Ce test a été réalisé avec 81 hoppers ce qui représente 3.75 KB donc 1024x3
 
 Le hopper de farm représente environ 50 bytes pour être large au niveau des valeurs car celle-ci on été arrondi a l'unité supérieur.
 
+*Commandes:
+
+- /hopper -> permet de give un hopper.
+- /hopper list -> permet de lister tous les hoppers. 
+
+*Permissions:
+
+- hlr.command.use
+
 ![image](https://user-images.githubusercontent.com/75928424/111283245-34b0dd80-863f-11eb-94da-0ea5032f8348.png)
+![image](https://user-images.githubusercontent.com/75928424/111360506-1eca0980-868d-11eb-8917-9037b14fda76.png)
