@@ -29,3 +29,5 @@ De plus d'après des calculs et des analyses via spark:
 Ce test a été réalisé avec 81 hoppers ce qui représente 3.75 KB donc 1024x3.75=3840 bytes et enfin 3840/81=47 bytes environ.
 
 Le hopper de farm représente environ 50 bytes pour être large au niveau des valeurs car celle-ci on été arrondi a l'unité supérieur.
+![image](https://user-images.githubusercontent.com/75928424/111283245-34b0dd80-863f-11eb-94da-0ea5032f8348.png)
+![image](https://user-images.githubusercontent.com/75928424/111283306-44c8bd00-863f-11eb-8b46-8c51ec44e284.png)
