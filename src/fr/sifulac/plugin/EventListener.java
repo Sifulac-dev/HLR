@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -17,6 +18,7 @@ import fr.sifulac.plugin.ActionBar.ActionBar;
 import fr.sifulac.plugin.Object.HopperObject;
 import fr.sifulac.plugin.Object.Maps;
 import fr.sifulac.plugin.Object.Region;
+import fr.sifulac.plugin.Utils.Reflections;
 
 public class EventListener implements Listener {
 
@@ -66,7 +68,7 @@ public class EventListener implements Listener {
 
 					region.addHopper(hop);
 					main.database.addHopper(hop, regX, regZ, b.getWorld().getName());
-					event.getPlayer().sendMessage(Reflections.msgSetHopper);
+					ActionBar.sendActionBar(event.getPlayer(), Reflections.msgSetHopper);	
 
 				}
 
@@ -75,7 +77,7 @@ public class EventListener implements Listener {
 				Region r = new Region(String.valueOf(regX + regZ));
 				if (Boolean.TRUE.equals(r.addHopper(hop))) {
 					maps.getRegions().add(r);
-					event.getPlayer().sendMessage(Reflections.msgSetHopper);
+					ActionBar.sendActionBar(event.getPlayer(), Reflections.msgSetHopper);	
 				}
 
 			}
@@ -87,8 +89,7 @@ public class EventListener implements Listener {
 			r.addHopper(hop);
 			m.getRegions().add(r);
 			Reflections.getMaps().add(m);
-			event.getPlayer().sendMessage(Reflections.msgSetHopper);
-
+			ActionBar.sendActionBar(event.getPlayer(), Reflections.msgSetHopper);		
 		}
 	}
 
@@ -97,9 +98,11 @@ public class EventListener implements Listener {
 
 		Block b = event.getBlock();
 		state = false;
-
+		
 		if (b.getType().equals(Material.HOPPER)) {
-
+			
+			event.setCancelled(true);
+			
 			int cx = b.getChunk().getX();
 			int cz = b.getChunk().getZ();
 
@@ -109,9 +112,19 @@ public class EventListener implements Listener {
 					&& b.getLocation().getBlockY() == ((HopperObject) hp[0]).getLocationY()
 					&& b.getLocation().getBlockZ() == ((HopperObject) hp[0]).getLocationZ()) {
 				
-				((Region) hp[1]).getHoppersInRegions().remove(((HopperObject) hp[0]));
-				main.database.removeHopper(((HopperObject) hp[0]));
-				event.getPlayer().sendMessage("§eHopper enlevé !");
+				if(hasAvaliableSlot(event.getPlayer())) { //RECUP HOPPER
+					
+					((Region) hp[1]).getHoppersInRegions().remove(((HopperObject) hp[0]));
+					main.database.removeHopper(((HopperObject) hp[0]));
+					ActionBar.sendActionBar(event.getPlayer(), "§eVous avez récupéré le hopper");	
+					b.setType(Material.AIR);
+					event.getPlayer().getInventory().addItem(Reflections.getHopper());
+					
+				} else { //NE RECUP PAS					
+					
+					ActionBar.sendActionBar(event.getPlayer(), "§cVous n'avez pas assez de place dans l'inventaire.");	
+					
+				}				
 			}
 		}
 		state = true;
@@ -172,8 +185,7 @@ public class EventListener implements Listener {
 						return;
 					}
 					
-					ActionBar.sendActionBar(e.getPlayer(),
-							"§bIl y a§c " + ((HopperObject) hp[0]).getNumberCactus() + " §bcactus dans le hopper");					
+					ActionBar.sendActionBar(e.getPlayer(), "§bIl y a§c " + ((HopperObject) hp[0]).getNumberCactus() + " §bcactus dans le hopper");					
 					return;
 				}
 			}
@@ -181,6 +193,16 @@ public class EventListener implements Listener {
 		}
 	}
 
+	private boolean hasAvaliableSlot(Player player){
+	    Inventory inv = player.getInventory();
+	    for (ItemStack item: inv.getContents()) {
+	         if(item == null) {
+	                 return true;
+	         }
+	     }
+	return false;
+	}
+	
 	private void deleteCactusInHopper(Player p, HopperObject hopper) {
 			
 			int numberSpaceFree = numberItemCanReceive(p.getInventory())*64;
@@ -193,14 +215,13 @@ public class EventListener implements Listener {
 			if(cactusConsume > 0) {
 				
 				hopper.removeCactus(numberCactus);
-				Main.getInstance().database.resetHopper(hopper);
 				p.getInventory().addItem(new ItemStack(Material.CACTUS, numberCactus));
-				
+				ActionBar.sendActionBar(p, "§eVous avez récupéré§b " + numberCactus + " §ecactus");		
 			} else {
 				
 				hopper.removeCactus(numberSpaceFree);
 				p.getInventory().addItem(new ItemStack(Material.CACTUS, numberSpaceFree));
-				
+				ActionBar.sendActionBar(p, "§eVous avez récupéré§b " + numberSpaceFree + " §ecactus");		
 			}						
 	}
 	

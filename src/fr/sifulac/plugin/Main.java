@@ -3,6 +3,8 @@ package fr.sifulac.plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import fr.sifulac.plugin.Utils.DataBase;
+
 public class Main extends JavaPlugin {
 
 	public String nmsver;

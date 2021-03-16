@@ -1,4 +1,4 @@
-package fr.sifulac.plugin;
+package fr.sifulac.plugin.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import fr.sifulac.plugin.Main;
 import fr.sifulac.plugin.Object.HopperObject;
 import fr.sifulac.plugin.Object.Maps;
 import fr.sifulac.plugin.Object.Region;
